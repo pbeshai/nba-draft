@@ -10,11 +10,30 @@ import d3 from '../d3';
  */
 export default function transformResults(data) {
   return Object.assign({},
+    addInMissingPlayerIds(data),
     transformExecutives(data),
     transformTeams(data),
     transformPlayers(data),
     transformDrafts(data)
   );
+}
+
+/**
+ * Mutates data so all players have IDs. If they did not have an id,
+ * the flag `phonyId` is added and set to true and a generated value
+ * is put in as the `id`. The flag `hasStats` is set to false for
+ * players with no id and set to true otherwise.
+ */
+function addInMissingPlayerIds(data) {
+  data.players.forEach((player, i) => {
+    if (player.id == null) {
+      player.id = `pb_dnp${i}`;
+      player.phonyId = true;
+      player.hasStats = false;
+    } else {
+      player.hasStats = true;
+    }
+  });
 }
 
 

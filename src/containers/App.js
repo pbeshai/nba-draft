@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import './App.css';
 
 import { fetchDataIfNeeded } from '../state/reducer';
 
@@ -28,12 +27,18 @@ class App extends Component {
   }
 
   render() {
-    const { draftYears = [] } = this.props;
+    const { draftYears = [], players = {} } = this.props;
 
     return (
       <div className="App">
-        <h3>Draft Years</h3>
-        {draftYears.map(year => <div key={year}>{year}</div>)}
+        <div className="container">
+          <h3>Draft Years</h3>
+          {draftYears.map(year => <div key={year}>{year}</div>)}
+
+          <h3>Players</h3>
+          {Object.keys(players).map(playerId => <div key={playerId}>{playerId}</div>)}
+
+        </div>
       </div>
     );
   }
