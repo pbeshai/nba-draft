@@ -11,10 +11,10 @@ export const receiveData = createAction('RECEIVE_DATA');
 /**
  * Action creator to fetch data from the API
  */
-const fetchData = () => dispatch => {
+const fetchData = () => (dispatch) => {
   dispatch(requestData());
-  return Api.getAllData().then(data => dispatch(receiveData(data)))
-}
+  return Api.getAllData().then(data => dispatch(receiveData(data)));
+};
 
 /**
  * Helper to check if we have already fetched the data or not
@@ -36,7 +36,7 @@ export const fetchDataIfNeeded = () => (dispatch, getState) => (
  * Players reducer
  */
 const players = handleActions({
-  REQUEST_DATA: (state, action) => ({
+  REQUEST_DATA: () => ({
     isFetching: true,
   }),
 
@@ -50,7 +50,7 @@ const players = handleActions({
  * Draft years reducer
  */
 const draftYears = handleActions({
-  REQUEST_DATA: (state, action) => ({
+  REQUEST_DATA: () => ({
     isFetching: true,
   }),
 
@@ -64,7 +64,7 @@ const draftYears = handleActions({
  * Drafts reducer
  */
 const drafts = handleActions({
-  REQUEST_DATA: (state, action) => ({
+  REQUEST_DATA: () => ({
     isFetching: true,
   }),
 
@@ -78,7 +78,7 @@ const drafts = handleActions({
  * Teams reducer
  */
 const teams = handleActions({
-  REQUEST_DATA: (state, action) => ({
+  REQUEST_DATA: () => ({
     isFetching: true,
   }),
 
@@ -92,7 +92,7 @@ const teams = handleActions({
  * Executives reducer
  */
 const executives = handleActions({
-  REQUEST_DATA: (state, action) => ({
+  REQUEST_DATA: () => ({
     isFetching: true,
   }),
 

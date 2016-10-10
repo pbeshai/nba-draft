@@ -1,24 +1,31 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import Match from 'react-router/Match';
+import { addUrlProps } from 'react-url-query';
 
 import { fetchDataIfNeeded } from '../state/reducer';
 
-const mapStateToProps = (state, props) => ({
-  drafts: state.drafts.payload,
-  draftYears: state.draftYears.payload,
-  executives: state.executives.payload,
-  players: state.players.payload,
-  teams: state.teams.payload,
-});
+import OverviewPage from './OverviewPage';
+import MetricSelector from '../components/MetricSelector';
+import * as CustomUrlTypes from '../url/customUrlTypes';
+import { metricsById } from '../constants/metrics';
 
+const urlPropsQueryConfig = {
+  metric: { type: CustomUrlTypes.metric },
+};
+
+const mapStateToProps = () => ({
+});
 
 class App extends Component {
   static propTypes = {
-    drafts: PropTypes.object,
-    draftYears: PropTypes.array,
-    executives: PropTypes.object,
-    players: PropTypes.object,
-    teams: PropTypes.object,
+    dispatch: PropTypes.func,
+    metric: PropTypes.object,
+    onChangeMetric: PropTypes.func,
+  }
+
+  static defaultProps = {
+    metric: metricsById.bpm,
   }
 
   componentWillMount() {
@@ -26,22 +33,24 @@ class App extends Component {
     dispatch(fetchDataIfNeeded());
   }
 
-  render() {
-    const { draftYears = [], players = {} } = this.props;
+  renderMetricSelector() {
+    const { metric, onChangeMetric } = this.props;
 
     return (
+      <MetricSelector metric={metric} onChangeMetric={onChangeMetric} />
+    );
+  }
+
+  render() {
+    return (
       <div className="App">
+        {this.renderMetricSelector()}
         <div className="container">
-          <h3>Draft Years</h3>
-          {draftYears.map(year => <div key={year}>{year}</div>)}
-
-          <h3>Players</h3>
-          {Object.keys(players).map(playerId => <div key={playerId}>{playerId}</div>)}
-
+          <Match exactly pattern="/" component={OverviewPage} />
         </div>
       </div>
     );
   }
 }
 
-export default connect(mapStateToProps)(App);
+export default addUrlProps({ urlPropsQueryConfig })(connect(mapStateToProps)(App));

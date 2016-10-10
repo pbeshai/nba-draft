@@ -1,24 +1,6 @@
 import d3 from '../d3';
 
 /**
- * Takes API results and organizes them.
- *
- * - adds an executives collection
- * - makes team by ID
- * - makes players by ID
- * - supplements draft information to link to players and executives by ID
- */
-export default function transformResults(data) {
-  return Object.assign({},
-    addInMissingPlayerIds(data),
-    transformExecutives(data),
-    transformTeams(data),
-    transformPlayers(data),
-    transformDrafts(data)
-  );
-}
-
-/**
  * Mutates data so all players have IDs. If they did not have an id,
  * the flag `phonyId` is added and set to true and a generated value
  * is put in as the `id`. The flag `hasStats` is set to false for
@@ -44,7 +26,7 @@ function transformExecutives(data) {
   const players = data.players;
 
   const executives = {};
-  players.forEach(player => {
+  players.forEach((player) => {
     const { executiveId, executive: executiveName, id: playerId, draftYear, draftPick } = player;
     if (!executives[executiveId]) {
       executives[executiveId] = {
@@ -74,7 +56,7 @@ function transformTeams(data) {
     .rollup(teams => teams[0])
     .object(data.teams);
 
-  return { teams }
+  return { teams };
 }
 
 /**
@@ -86,7 +68,7 @@ function transformPlayers(data) {
     .rollup(players => players[0])
     .object(data.players);
 
-  return { players }
+  return { players };
 }
 
 /**
@@ -97,7 +79,7 @@ function transformDrafts(data) {
   const players = data.players;
 
   const drafts = {};
-  players.forEach(player => {
+  players.forEach((player) => {
     const { executiveId, id: playerId, draftYear } = player;
     if (!drafts[draftYear]) {
       drafts[draftYear] = {
@@ -113,4 +95,22 @@ function transformDrafts(data) {
   });
 
   return { drafts, draftYears: data.draftYears };
+}
+
+/**
+ * Takes API results and organizes them.
+ *
+ * - adds an executives collection
+ * - makes team by ID
+ * - makes players by ID
+ * - supplements draft information to link to players and executives by ID
+ */
+export default function transformResults(data) {
+  return Object.assign({},
+    addInMissingPlayerIds(data),
+    transformExecutives(data),
+    transformTeams(data),
+    transformPlayers(data),
+    transformDrafts(data)
+  );
 }

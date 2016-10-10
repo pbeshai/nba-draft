@@ -1,4 +1,4 @@
-import { createStore, applyMiddleware,compose } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import createLogger from 'redux-logger';
 import rootReducer from './reducer';
@@ -11,7 +11,7 @@ const middleware = [thunkMiddleware];
 
 // when not in production enable redux tools and add logger middleware
 if (process.env.NODE_ENV !== 'production') {
-  composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+  composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose; // eslint-disable-line no-underscore-dangle
   middleware.push(loggerMiddleware);
 }
 

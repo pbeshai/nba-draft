@@ -1,2 +1,17 @@
 @import './skeleton/normalize.css';
 @import './skeleton/skeleton.css';
+
+body {
+  background: #191919;
+  color: #eee;
+}
+
+input, select {
+  color: #333;
+}
+
+
+h1, h2, h3, h4, h5 {
+  text-transform: uppercase;
+  font-weight: 600;
+}
