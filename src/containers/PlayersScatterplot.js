@@ -18,8 +18,8 @@ const mapDispatchToProps = dispatch => ({
 const PlayersScatterplot = ({ highlightPlayerId, onHighlightPlayer, players, yMetric }) => {
   const data = d3.values(players)
     .filter(d => d.hasStats)
-    .filter(d => d.min > 400)
-    .slice(0, 100);
+    .filter(d => d.min > 400);
+    // .slice(0, 100);
 
   const xMetric = metricsById.draftPick;
 

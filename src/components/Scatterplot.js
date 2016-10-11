@@ -2,11 +2,14 @@ import React, { PureComponent, PropTypes } from 'react';
 import d3 from '../d3';
 import addComputedProps from '../hoc/addComputedProps';
 
-// import './Scatterplot.scss';
+import './Scatterplot.scss';
 
+// TODO: move this to its own place
 const dataDefPropType = PropTypes.shape({
   label: PropTypes.string,
   unit: PropTypes.string,
+  formatter: PropTypes.func,
+  shortFormatter: PropTypes.func,
 });
 
 /**
@@ -29,7 +32,7 @@ function visProps(props) {
     yDomain,
   } = props;
 
-  const color = () => 'rgba(150, 200, 250, 0.3)';
+  const color = () => 'rgb(150, 200, 250)';
   const padding = {
     top: 20,
     right: 20,
@@ -38,7 +41,6 @@ function visProps(props) {
   };
 
   const plotAreaWidth = width - padding.left - padding.right;
-
   const plotAreaHeight = height - padding.top - padding.bottom;
 
   if (!xDomain && data) {
@@ -394,4 +396,4 @@ class Scatterplot extends PureComponent {
   }
 }
 
-export default addComputedProps(visProps)(Scatterplot);
+export default addComputedProps(visProps, { debug: true, changeExclude: ['highlightPointId'] })(Scatterplot);
