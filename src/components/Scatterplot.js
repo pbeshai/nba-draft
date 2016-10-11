@@ -200,7 +200,7 @@ class Scatterplot extends PureComponent {
       .attr('x', -25)
       .attr('width', 50)
       .attr('height', 20)
-      .style('fill', '#191919');
+      .classed('highlight-text-bg', true);
     highlightX.append('text')
       .attr('dy', 15)
       .attr('text-anchor', 'middle');
@@ -214,7 +214,7 @@ class Scatterplot extends PureComponent {
       .attr('width', 30)
       .attr('y', -10)
       .attr('height', 20)
-      .style('fill', '#191919');
+      .classed('highlight-text-bg', true);
     highlightY.append('text')
       .attr('dy', 4)
       .attr('text-anchor', 'end');
@@ -261,7 +261,7 @@ class Scatterplot extends PureComponent {
     // show name in the label
     this.highlight.select('text')
       .style('fill', highlightColor)
-      .text(highlightPoint.label);
+      .text(highlightPoint.name);
 
     const xValue = highlightPoint[xKey];
     const yValue = highlightPoint[yKey];
