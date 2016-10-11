@@ -11,6 +11,7 @@ import * as scale from 'd3-scale';
 import * as selection from 'd3-selection';
 import * as shape from 'd3-shape';
 import * as transition from 'd3-transition';
+import * as voronoi from 'd3-voronoi';
 
 const d3 = Object.assign({},
   array,
@@ -22,6 +23,7 @@ const d3 = Object.assign({},
   selection,
   shape,
   transition,
+  voronoi,
 );
 
 // put d3 in the global window for convenience

@@ -29,7 +29,7 @@ function visProps(props) {
     yDomain,
   } = props;
 
-  const color = () => 'rgba(150, 150, 150, 0.3)';
+  const color = () => 'rgba(150, 200, 250, 0.3)';
   const padding = {
     top: 20,
     right: 20,
@@ -64,6 +64,11 @@ function visProps(props) {
     yScale.domain([yDomain[0], yDomain[1] * yDomainPadding]);
   }
 
+  const voronoiDiagram = d3.voronoi()
+    .x(d => xScale(d[xKey]))
+    .y(d => yScale(d[yKey]))
+    .size([plotAreaWidth, plotAreaHeight])(data);
+
   return {
     color,
     padding,
@@ -71,6 +76,7 @@ function visProps(props) {
     plotAreaHeight,
     xScale,
     yScale,
+    voronoiDiagram,
   };
 }
 
@@ -82,9 +88,7 @@ function visProps(props) {
  * @prop {String} highlightPointId The ID of the point to highlight
  * @prop {Function} onHighlightPoint Callback for when a point is hovered on
  * @prop {Number} width The width of the chart
- * @prop {Array} yExtent Optional. The min and max value of the yKey in the chart
  * @prop {String} yKey="y" The key in the data points to read the y value from
- * @prop {Array} xExtent Optional. The min and max value of the xKey in the chart
  * @prop {String} xKey="x" The key in the data points to read the x value from
  */
 class Scatterplot extends PureComponent {
@@ -98,8 +102,9 @@ class Scatterplot extends PureComponent {
     padding: PropTypes.object,
     plotAreaHeight: PropTypes.number,
     plotAreaWidth: PropTypes.number,
-    pointRadius: PropTypes.number, // TODO: support function
+    pointRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.func]),
     width: PropTypes.number,
+    voronoiDiagram: PropTypes.object,
     xDataDef: dataDefPropType,
     xKey: PropTypes.string,
     xScale: PropTypes.func,
@@ -183,6 +188,8 @@ class Scatterplot extends PureComponent {
       .attr('class', 'axis-label')
       .attr('text-anchor', 'middle');
 
+    this.circles = this.g.append('g').attr('class', 'circles');
+
     // set up highlight
     this.highlight = this.g.append('g')
       .attr('class', 'highlight')
@@ -222,6 +229,10 @@ class Scatterplot extends PureComponent {
       .attr('transform', 'translate(10 0)')
       .attr('x1', 0);
 
+    this.voronoi = this.g.append('g')
+      .attr('class', 'voronoi')
+      .on('mouseleave', () => this.onHoverPoint(null));
+
     this.update();
   }
 
@@ -232,6 +243,23 @@ class Scatterplot extends PureComponent {
     this.updateAxes();
     this.updateChart();
     this.updateHighlight();
+    this.updateVoronoi();
+  }
+
+  updateVoronoi() {
+    const { voronoiDiagram } = this.props;
+
+    const binding = this.voronoi.selectAll('path')
+      .data(voronoiDiagram.polygons());
+
+    binding.exit().remove();
+
+    const entering = binding.enter().append('path');
+
+
+    binding.merge(entering)
+      .attr('d', d => (d ? `M${d.join('L')}Z` : null))
+      .on('mouseenter', d => this.onHoverPoint(d.data));
   }
 
   updateHighlight() {
@@ -307,12 +335,10 @@ class Scatterplot extends PureComponent {
 
     this.g.attr('transform', `translate(${padding.left} ${padding.top})`);
 
-    const binding = this.g.selectAll('.data-point').data(data, d => d.id);
+    const binding = this.circles.selectAll('.data-point').data(data, d => d.id);
     binding.exit().remove();
     const entering = binding.enter().append('circle')
-      .classed('data-point', true)
-      .on('mouseenter', d => this.onHoverPoint(d))
-      .on('mouseleave', () => this.onHoverPoint(null));
+      .classed('data-point', true);
 
     binding.merge(entering)
       .transition()
