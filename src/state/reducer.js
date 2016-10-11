@@ -7,6 +7,7 @@ import * as Api from '../api/api';
  */
 export const requestData = createAction('REQUEST_DATA');
 export const receiveData = createAction('RECEIVE_DATA');
+export const highlightPlayer = createAction('HIGHLIGHT_PLAYER');
 
 /**
  * Action creator to fetch data from the API
@@ -103,7 +104,15 @@ const executives = handleActions({
 }, { isFetching: false });
 
 
+const charts = handleActions({
+  HIGHLIGHT_PLAYER: (state, action) => ({
+    ...state,
+    highlightPlayerId: action.payload,
+  }),
+}, {});
+
 export default combineReducers({
+  charts,
   drafts,
   draftYears,
   executives,

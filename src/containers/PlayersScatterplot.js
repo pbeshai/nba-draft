@@ -1,17 +1,25 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+
 import d3 from '../d3';
 import Scatterplot from '../components/Scatterplot';
 import { metricsById } from '../constants/metrics';
+import { highlightPlayer } from '../state/reducer';
 
 const mapStateToProps = state => ({
+  highlightPlayerId: state.charts.highlightPlayerId,
   players: state.players.payload,
 });
 
-const PlayersScatterplot = ({ players, yMetric }) => {
+const mapDispatchToProps = dispatch => ({
+  onHighlightPlayer: d => dispatch(highlightPlayer(d && d.id)),
+});
+
+const PlayersScatterplot = ({ highlightPlayerId, onHighlightPlayer, players, yMetric }) => {
   const data = d3.values(players)
     .filter(d => d.hasStats)
-    .filter(d => d.min > 400);
+    .filter(d => d.min > 400)
+    .slice(0, 100);
 
   const xMetric = metricsById.draftPick;
 
@@ -27,14 +35,18 @@ const PlayersScatterplot = ({ players, yMetric }) => {
         xKey={xMetric.id}
         xDataDef={xMetric}
         yDataDef={yMetric}
+        highlightPointId={highlightPlayerId}
+        onHighlightPoint={onHighlightPlayer}
       />
     </div>
   );
 };
 
 PlayersScatterplot.propTypes = {
+  highlightPlayerId: PropTypes.string,
+  onHighlightPlayer: PropTypes.func,
   players: PropTypes.object,
   yMetric: PropTypes.object,
 };
 
-export default connect(mapStateToProps)(PlayersScatterplot);
+export default connect(mapStateToProps, mapDispatchToProps)(PlayersScatterplot);
