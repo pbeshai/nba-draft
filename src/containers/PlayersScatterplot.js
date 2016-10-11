@@ -5,10 +5,14 @@ import d3 from '../d3';
 import Scatterplot from '../components/Scatterplot';
 import { metricsById } from '../constants/metrics';
 import { highlightPlayer } from '../state/reducer';
+import {
+  getHighlightPlayerId,
+  getFilteredPlayers,
+} from '../state/selectors';
 
 const mapStateToProps = state => ({
-  highlightPlayerId: state.charts.highlightPlayerId,
-  players: state.players.payload,
+  highlightPlayerId: getHighlightPlayerId(state),
+  players: getFilteredPlayers(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -16,17 +20,12 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const PlayersScatterplot = ({ highlightPlayerId, onHighlightPlayer, players, yMetric }) => {
-  const data = d3.values(players)
-    .filter(d => d.hasStats)
-    .filter(d => d.min > 400);
-    // .slice(0, 100);
-
   const xMetric = metricsById.draftPick;
 
   return (
     <div className="PlayersScatterplot">
       <Scatterplot
-        data={data}
+        data={players}
         width={400}
         height={400}
         xDomainPadding={1}
@@ -45,7 +44,7 @@ const PlayersScatterplot = ({ highlightPlayerId, onHighlightPlayer, players, yMe
 PlayersScatterplot.propTypes = {
   highlightPlayerId: PropTypes.string,
   onHighlightPlayer: PropTypes.func,
-  players: PropTypes.object,
+  players: PropTypes.array,
   yMetric: PropTypes.object,
 };
 

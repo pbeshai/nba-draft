@@ -33,7 +33,7 @@ export default function addComputedProps(computedPropsFunc, options = {}) {
       static defaultProps = WrappedComponent.defaultProps
 
       componentWillMount() {
-        this.propsToAdd = computedPropsFunc(this.props);
+        this.propsToAdd = Object.assign({ recomputedProps: true }, computedPropsFunc(this.props));
       }
 
       componentWillUpdate(nextProps) {
@@ -43,7 +43,9 @@ export default function addComputedProps(computedPropsFunc, options = {}) {
             shallowEqualsDebug(this.props, nextProps, changeExclude, changeInclude,
               `Computing props in ${displayName} due to prop changes`);
           }
-          this.propsToAdd = computedPropsFunc(nextProps);
+          this.propsToAdd = Object.assign({ recomputedProps: true }, computedPropsFunc(nextProps));
+        } else if (this.propsToAdd.recomputedProps) {
+          this.propsToAdd = { ...this.propsToAdd, recomputedProps: false };
         }
       }
 

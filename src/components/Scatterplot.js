@@ -105,6 +105,7 @@ class Scatterplot extends PureComponent {
     plotAreaHeight: PropTypes.number,
     plotAreaWidth: PropTypes.number,
     pointRadius: PropTypes.oneOfType([PropTypes.number, PropTypes.func]),
+    recomputedProps: PropTypes.bool,
     width: PropTypes.number,
     voronoiDiagram: PropTypes.object,
     xDataDef: dataDefPropType,
@@ -242,10 +243,16 @@ class Scatterplot extends PureComponent {
    * Update the d3 chart - this is the main drawing function
    */
   update() {
-    this.updateAxes();
-    this.updateChart();
+    const { recomputedProps } = this.props;
+    // only update if we recomputed props that these rely on
+    if (recomputedProps) {
+      this.updateAxes();
+      this.updateChart();
+      this.updateVoronoi();
+    }
+
+    // always update highlight
     this.updateHighlight();
-    this.updateVoronoi();
   }
 
   updateVoronoi() {
