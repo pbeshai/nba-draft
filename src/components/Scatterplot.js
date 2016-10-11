@@ -1,6 +1,7 @@
 import React, { PureComponent, PropTypes } from 'react';
 import d3 from '../d3';
 import addComputedProps from '../hoc/addComputedProps';
+import AxisTooltip from './AxisTooltip';
 
 import './Scatterplot.scss';
 
@@ -193,45 +194,6 @@ class Scatterplot extends PureComponent {
 
     this.circles = this.g.append('g').attr('class', 'circles');
 
-    // set up highlight
-    this.highlight = this.g.append('g')
-      .attr('class', 'highlight')
-      .attr('transform', 'translate(0 -5)');
-
-    this.highlight.append('text')
-      .attr('class', 'highlight-label');
-    const axisHighlight = this.highlight.append('g')
-      .attr('class', 'axis-highlights')
-      .attr('transform', 'translate(0 5)');
-
-    const highlightX = axisHighlight.append('g').attr('class', 'highlight-x');
-    // add in a rect to fill out the area beneath the hovered value in X axis
-    highlightX.append('rect')
-      .attr('x', -25)
-      .attr('width', 50)
-      .attr('height', 20)
-      .classed('highlight-text-bg', true);
-    highlightX.append('text')
-      .attr('dy', 15)
-      .attr('text-anchor', 'middle');
-    highlightX.append('line')
-      .attr('y1', 0);
-
-    const highlightY = axisHighlight.append('g').attr('class', 'highlight-y');
-    // add in a rect to fill out the area beneath the hovered value in Y axis
-    highlightY.append('rect')
-      .attr('x', -20)
-      .attr('width', 30)
-      .attr('y', -10)
-      .attr('height', 20)
-      .classed('highlight-text-bg', true);
-    highlightY.append('text')
-      .attr('dy', 4)
-      .attr('text-anchor', 'end');
-    highlightY.append('line')
-      .attr('transform', 'translate(10 0)')
-      .attr('x1', 0);
-
     this.voronoi = this.g.append('g')
       .attr('class', 'voronoi')
       .on('mouseleave', () => this.onHoverPoint(null));
@@ -250,9 +212,6 @@ class Scatterplot extends PureComponent {
       this.updateChart();
       this.updateVoronoi();
     }
-
-    // always update highlight
-    this.updateHighlight();
   }
 
   updateVoronoi() {
@@ -269,62 +228,6 @@ class Scatterplot extends PureComponent {
     binding.merge(entering)
       .attr('d', d => (d ? `M${d.join('L')}Z` : null))
       .on('mouseenter', d => this.onHoverPoint(d.data));
-  }
-
-  updateHighlight() {
-    const {
-      color,
-      yKey,
-      xKey,
-      xDataDef,
-      yDataDef,
-      xScale,
-      yScale,
-    } = this.props;
-
-    const highlightPoint = this.getHighlightPoint();
-
-    // if no highlight, hide the highlight markers
-    if (!highlightPoint) {
-      this.highlight.style('display', 'none');
-      return;
-    }
-
-    // otherwise update an show them
-    this.highlight.style('display', '');
-
-    const highlightColor = color(highlightPoint.id);
-
-    // show name in the label
-    this.highlight.select('text')
-      .style('fill', highlightColor)
-      .text(highlightPoint.name);
-
-    const xValue = highlightPoint[xKey];
-    const yValue = highlightPoint[yKey];
-
-    // show the value in the x axis
-    const xAxisY = yScale.range()[0] + 4;
-    const highlightX = this.highlight.select('.highlight-x')
-      .attr('transform', `translate(${xScale(xValue)} ${xAxisY})`);
-
-    highlightX.select('text')
-      .style('fill', highlightColor)
-      .text(xDataDef.formatter(xValue));
-    highlightX.select('line')
-      .attr('y2', -(xAxisY - yScale(yValue)))
-      .style('stroke', highlightColor);
-
-
-    // show the value in the y axis
-    const highlightY = this.highlight.select('.highlight-y')
-      .attr('transform', `translate(-10 ${yScale(yValue)})`);
-    highlightY.select('text')
-      .style('fill', highlightColor)
-      .text(yDataDef.formatter(yValue));
-    highlightY.select('line')
-      .attr('x2', xScale(xValue))
-      .style('stroke', highlightColor);
   }
 
   /**
@@ -390,15 +293,37 @@ class Scatterplot extends PureComponent {
   }
 
   render() {
-    const { width, height, id } = this.props;
+    const { width, height, id, plotAreaWidth, plotAreaHeight, padding, xScale, yScale,
+      xDataDef, yDataDef, xKey, yKey, color } = this.props;
+
+    const highlightPoint = this.getHighlightPoint();
+    const highlightColor = highlightPoint ? color(highlightPoint.id) : undefined;
+
     return (
-      <svg
-        id={id}
-        className="Scatterplot chart"
-        height={height}
-        ref={(node) => { this.root = node; }}
-        width={width}
-      />
+      <div className="Scatterplot-container chart-container">
+        <svg
+          id={id}
+          className="Scatterplot chart"
+          height={height}
+          ref={(node) => { this.root = node; }}
+          width={width}
+        />
+        <AxisTooltip
+          color={highlightColor}
+          plotAreaWidth={plotAreaWidth}
+          plotAreaHeight={plotAreaHeight}
+          padding={padding}
+          width={width}
+          height={height}
+          highlightPoint={highlightPoint}
+          xScale={xScale}
+          yScale={yScale}
+          xDataDef={xDataDef}
+          yDataDef={yDataDef}
+          xKey={xKey}
+          yKey={yKey}
+        />
+      </div>
     );
   }
 }
