@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import d3 from '../d3';
 import Scatterplot from '../components/Scatterplot';
@@ -8,34 +8,33 @@ const mapStateToProps = state => ({
   players: state.players.payload,
 });
 
-class PlayersScatterplot extends Component {
-  static propTypes = {
-    players: PropTypes.object,
-    yMetric: PropTypes.object,
-  }
+const PlayersScatterplot = ({ players, yMetric }) => {
+  const data = d3.values(players)
+    .filter(d => d.hasStats)
+    .filter(d => d.min > 400);
 
-  render() {
-    const { players, yMetric } = this.props;
-    const data = d3.values(players).slice(0, 60)
-      .filter(d => d.pts != null);
+  const xMetric = metricsById.draftPick;
 
-    const xMetric = metricsById.draftPick;
+  return (
+    <div className="PlayersScatterplot">
+      <Scatterplot
+        data={data}
+        width={400}
+        height={400}
+        xDomainPadding={1}
+        yDomainPadding={1}
+        yKey={yMetric.id}
+        xKey={xMetric.id}
+        xDataDef={xMetric}
+        yDataDef={yMetric}
+      />
+    </div>
+  );
+};
 
-    return (
-      <div className="PlayersScatterplot">
-        <Scatterplot
-          data={data}
-          width={400}
-          height={400}
-          xDomainPadding={0}
-          yKey={yMetric.id}
-          xKey={xMetric.id}
-          xDataDef={xMetric}
-          yDataDef={yMetric}
-        />
-      </div>
-    );
-  }
-}
+PlayersScatterplot.propTypes = {
+  players: PropTypes.object,
+  yMetric: PropTypes.object,
+};
 
 export default connect(mapStateToProps)(PlayersScatterplot);

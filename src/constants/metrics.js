@@ -109,8 +109,8 @@ export const metricsById = {
   wsper48: metric({
     id: 'wsper48',
     label: 'Win Shares per 48',
-    formatter: Formatters.decFormat(1),
-    shortFormatter: Formatters.decFormat(0),
+    formatter: Formatters.decFormat(2),
+    shortFormatter: Formatters.decFormat(2),
   }),
   bpm: metric({
     id: 'bpm',

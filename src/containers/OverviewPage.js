@@ -23,13 +23,9 @@ const mapStateToProps = state => ({
 
 class OverviewPage extends Component {
   static propTypes = {
-    drafts: PropTypes.object,
-    draftYears: PropTypes.array,
-    executives: PropTypes.object,
     metric: PropTypes.object,
     onChangeMetric: PropTypes.func,
     players: PropTypes.object,
-    teams: PropTypes.object,
   }
 
   static contextTypes = {

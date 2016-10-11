@@ -16,16 +16,20 @@ const dataDefPropType = PropTypes.shape({
 function visProps(props) {
   const {
     data,
-    xExtent,
     xKey,
     yKey,
-    yExtent,
     width,
     height,
-    clampToZero = true,
+    clampToZero,
+    xDomainPadding = 1.15,
+    yDomainPadding = 1.15,
+  } = props;
+  let {
+    xDomain,
+    yDomain,
   } = props;
 
-  const color = () => '#666';
+  const color = () => 'rgba(150, 150, 150, 0.3)';
   const padding = {
     top: 20,
     right: 20,
@@ -37,31 +41,27 @@ function visProps(props) {
 
   const plotAreaHeight = height - padding.top - padding.bottom;
 
-  let xDomain = xExtent;
   if (!xDomain && data) {
     xDomain = d3.extent(data, d => d[xKey]);
   }
 
-  let yDomain = yExtent;
   if (!yDomain && data) {
     yDomain = d3.extent(data, d => d[yKey]);
   }
 
   if (clampToZero) {
-    yDomain[0] = 0;
-    xDomain[0] = 0;
+    yDomain = [0, yDomain[1]];
+    xDomain = [0, xDomain[1]];
   }
-
-  const domainPaddingFactor = 1.15;
 
   const xScale = d3.scaleLinear().range([0, plotAreaWidth]).clamp(true);
   if (xDomain) {
-    xScale.domain([xDomain[0], xDomain[1] * domainPaddingFactor]);
+    xScale.domain([xDomain[0], xDomain[1] * xDomainPadding]);
   }
 
   const yScale = d3.scaleLinear().range([plotAreaHeight, 0]).clamp(true);
   if (yDomain) {
-    yScale.domain([yDomain[0], yDomain[1] * domainPaddingFactor]);
+    yScale.domain([yDomain[0], yDomain[1] * yDomainPadding]);
   }
 
   return {
@@ -121,7 +121,6 @@ class Scatterplot extends PureComponent {
    * When the react component mounts, setup the d3 vis
    */
   componentDidMount() {
-    console.log('chart mounted');
     this.setup();
   }
 
@@ -133,7 +132,11 @@ class Scatterplot extends PureComponent {
   }
 
   onHoverPoint(d) {
-    this.props.onHighlightPoint(d && d.id);
+    const { onHighlightPoint } = this.props;
+
+    if (onHighlightPoint) {
+      onHighlightPoint(d && d.id);
+    }
   }
 
   /**
