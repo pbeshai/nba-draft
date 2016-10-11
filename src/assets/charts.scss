@@ -1,7 +1,8 @@
 .chart {
   .axis-label {
-    font-size: 12px;
-    fill: #999;
+    font-size: 11px;
+    fill: #555;
+    text-transform: uppercase;
   }
 
   .highlight-y,
@@ -20,12 +21,12 @@
     font-size: 10px;
 
     path, line {
-      stroke: #ddd;
+      stroke: #444;
       shape-rendering: crispEdges;
     }
 
     text {
-      fill: #888;
+      fill: #555;
     }
   }
 }

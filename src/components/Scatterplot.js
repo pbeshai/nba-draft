@@ -25,7 +25,7 @@ function visProps(props) {
     clampToZero = true,
   } = props;
 
-  const color = () => '#888';
+  const color = () => '#666';
   const padding = {
     top: 20,
     right: 20,
@@ -303,9 +303,9 @@ class Scatterplot extends PureComponent {
     } = this.props;
 
     this.g.attr('transform', `translate(${padding.left} ${padding.top})`);
-    console.log(data);
+
     const binding = this.g.selectAll('.data-point').data(data, d => d.id);
-    // binding.exit().remove();
+    binding.exit().remove();
     const entering = binding.enter().append('circle')
       .classed('data-point', true)
       .on('mouseenter', d => this.onHoverPoint(d))
@@ -316,8 +316,7 @@ class Scatterplot extends PureComponent {
       .attr('cx', d => xScale(d[xKey]))
       .attr('cy', d => yScale(d[yKey]))
       .attr('r', pointRadius)
-      .attr('stroke', d => color(d.id))
-      .attr('fill', d => d3.color(color(d.id)).brighter(0.3));
+      .attr('fill', d => color(d.id));
   }
 
   /**
