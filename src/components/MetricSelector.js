@@ -3,12 +3,10 @@ import metrics from '../constants/metrics';
 
 const MetricSelector = ({ metric, onChangeMetric }) => (
   <div className="metric-selector">
-    <div className="container">
-      <h5>Score By</h5>
-      <select value={metric.value} onChange={evt => onChangeMetric(evt.target.value)}>
-        {metrics.map(m => <option value={m.value} key={m.value}>{m.label}</option>)}
-      </select>
-    </div>
+    <h5>Score By</h5>
+    <select value={metric.id} onChange={evt => onChangeMetric(evt.target.value)}>
+      {metrics.map(m => <option value={m.id} key={m.id}>{m.label}</option>)}
+    </select>
   </div>
 );
 

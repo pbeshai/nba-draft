@@ -3,9 +3,28 @@
  * d3.scaleLinear, d3.line, d3.nest, etc.
  */
 import * as array from 'd3-array';
+import * as axis from 'd3-axis';
 import * as collection from 'd3-collection';
+import * as color from 'd3-color';
+import * as format from 'd3-format';
+import * as scale from 'd3-scale';
+import * as selection from 'd3-selection';
+import * as shape from 'd3-shape';
+import * as transition from 'd3-transition';
 
-export default Object.assign({},
+const d3 = Object.assign({},
   array,
+  axis,
   collection,
+  color,
+  format,
+  scale,
+  selection,
+  shape,
+  transition,
 );
+
+// put d3 in the global window for convenience
+window.d3 = d3;
+
+export default d3;
