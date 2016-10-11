@@ -3,7 +3,10 @@ import thunkMiddleware from 'redux-thunk';
 import createLogger from 'redux-logger';
 import rootReducer from './reducer';
 
-const loggerMiddleware = createLogger();
+const loggerMiddleware = createLogger({
+  collapsed: true,
+  level: 'debug',
+});
 
 // define which middleware to use depending on environment
 let composeEnhancers = compose;
