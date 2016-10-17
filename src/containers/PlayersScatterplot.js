@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
-import d3 from '../d3';
 import Scatterplot from '../components/Scatterplot';
 import { metricsById } from '../constants/metrics';
 import { highlightPlayer } from '../state/reducer';

@@ -1,6 +1,6 @@
 import React, { PureComponent, PropTypes } from 'react';
+import addComputedProps from 'react-computed-props';
 import d3 from '../d3';
-import addComputedProps from '../hoc/addComputedProps';
 import AxisTooltip from './AxisTooltip';
 
 import './Scatterplot.scss';
@@ -328,4 +328,4 @@ class Scatterplot extends PureComponent {
   }
 }
 
-export default addComputedProps(visProps, { debug: true, changeExclude: ['highlightPointId'] })(Scatterplot);
+export default addComputedProps(visProps, { debug: true, flagRecomputed: true, changeExclude: ['highlightPointId'] })(Scatterplot);
