@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import metrics from '../constants/metrics';
+import metrics from '../datadefs/metrics';
 
 const MetricSelector = ({ metric, onChangeMetric }) => (
   <div className="metric-selector">

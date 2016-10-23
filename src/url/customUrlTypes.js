@@ -1,4 +1,4 @@
-import { metricsById } from '../constants/metrics';
+import { metricsById } from '../datadefs/metrics';
 
 // eslint-disable-next-line import/prefer-default-export
 export const metric = {

@@ -1,15 +1,8 @@
 import React, { PureComponent, PropTypes } from 'react';
 import d3 from '../d3';
+import DataDefPropType from '../datadefs/DataDefPropType';
 
 import './AxisTooltip.scss';
-
-// TODO: move this to its own place
-const dataDefPropType = PropTypes.shape({
-  label: PropTypes.string,
-  unit: PropTypes.string,
-  formatter: PropTypes.func,
-  shortFormatter: PropTypes.func,
-});
 
 /**
  * Axis tooltip where values are shown around the plot area, overlapping
@@ -25,10 +18,10 @@ class AxisTooltip extends PureComponent {
     plotAreaHeight: PropTypes.number,
     plotAreaWidth: PropTypes.number,
     width: PropTypes.number,
-    xDataDef: dataDefPropType,
+    xDataDef: DataDefPropType,
     xKey: PropTypes.string,
     xScale: PropTypes.func,
-    yDataDef: dataDefPropType,
+    yDataDef: DataDefPropType,
     yKey: PropTypes.string,
     yScale: PropTypes.func,
   }

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { addUrlProps } from 'react-url-query';
 import * as CustomUrlTypes from '../url/customUrlTypes';
-import { metricsById } from '../constants/metrics';
+import { metricsById } from '../datadefs/metrics';
 
 import PlayersScatterplot from './PlayersScatterplot';
 import MetricSelector from '../components/MetricSelector';

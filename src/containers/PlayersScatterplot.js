@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 import Scatterplot from '../components/Scatterplot';
-import { metricsById } from '../constants/metrics';
+import { metricsById } from '../datadefs/metrics';
 import { highlightPlayer } from '../state/reducer';
 import {
   getHighlightPlayerId,
