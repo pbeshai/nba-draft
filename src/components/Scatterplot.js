@@ -18,8 +18,10 @@ function visProps(props) {
     width,
     height,
     clampToZero,
-    xDomainPadding = 1.15,
-    yDomainPadding = 1.15,
+    xDomainPadding,
+    xNice,
+    yDomainPadding,
+    yNice,
   } = props;
   let {
     xDomain,
@@ -53,11 +55,19 @@ function visProps(props) {
   const xScale = d3.scaleLinear().range([0, plotAreaWidth]).clamp(true);
   if (xDomain) {
     xScale.domain([xDomain[0], xDomain[1] * xDomainPadding]);
+
+    if (xNice) {
+      xScale.nice();
+    }
   }
 
   const yScale = d3.scaleLinear().range([plotAreaHeight, 0]).clamp(true);
   if (yDomain) {
-    yScale.domain([yDomain[0], yDomain[1] * yDomainPadding]);
+    yScale.domain([yDomain[0], yDomain[1] * yDomainPadding]).nice();
+
+    if (yNice) {
+      xScale.nice();
+    }
   }
 
   const voronoiDiagram = d3.voronoi()
@@ -103,10 +113,12 @@ class Scatterplot extends PureComponent {
     width: PropTypes.number,
     voronoiDiagram: PropTypes.object,
     xDataDef: DataDefPropType,
+    xNice: PropTypes.bool,
     xKey: PropTypes.string,
     xScale: PropTypes.func,
     yDataDef: DataDefPropType,
     yKey: PropTypes.string,
+    yNice: PropTypes.bool,
     yScale: PropTypes.func,
   }
 
@@ -114,9 +126,13 @@ class Scatterplot extends PureComponent {
     data: [],
     yKey: 'y',
     xKey: 'x',
+    xNice: true,
+    yNice: true,
     width: 200,
     height: 200,
     pointRadius: 3,
+    xDomainPadding: 1,
+    yDomainPadding: 1,
   }
 
   /**
@@ -201,8 +217,9 @@ class Scatterplot extends PureComponent {
     const { recomputedProps } = this.props;
     // only update if we recomputed props that these rely on
     if (recomputedProps) {
-      this.updateAxes();
       this.updateChart();
+      this.updateAxes();
+      this.updatePoints();
       this.updateVoronoi();
     }
   }
@@ -224,12 +241,22 @@ class Scatterplot extends PureComponent {
   }
 
   /**
-   * Iterates through data, using line generators to update charts.
+   * Updates basic parts of the chart
    */
   updateChart() {
     const {
-      data,
       padding,
+    } = this.props;
+
+    this.g.attr('transform', `translate(${padding.left} ${padding.top})`);
+  }
+
+  /**
+   * Updates the points in the chart
+   */
+  updatePoints() {
+    const {
+      data,
       color,
       pointRadius,
       xKey,
@@ -238,12 +265,13 @@ class Scatterplot extends PureComponent {
       yScale,
     } = this.props;
 
-    this.g.attr('transform', `translate(${padding.left} ${padding.top})`);
-
     const binding = this.circles.selectAll('.data-point').data(data, d => d.id);
     binding.exit().remove();
     const entering = binding.enter().append('circle')
-      .classed('data-point', true);
+      .classed('data-point', true)
+      .attr('r', 1e-6)
+      .attr('cx', d => xScale(d[xKey]))
+      .attr('cy', d => yScale(d[yKey]));
 
     binding.merge(entering)
       .transition()

@@ -6,6 +6,7 @@ import * as CustomUrlTypes from '../url/customUrlTypes';
 import { metricsById } from '../datadefs/metrics';
 
 import PlayersScatterplot from './PlayersScatterplot';
+import PlayersVerticalHistogram from './PlayersVerticalHistogram';
 import MetricSelector from '../components/MetricSelector';
 
 const urlPropsQueryConfig = {
@@ -46,10 +47,20 @@ class OverviewPage extends Component {
     return (
       <div>
         <h3>Players</h3>
-        <PlayersScatterplot
-          yMetric={metric}
-          data={players}
-        />
+        <div className="row">
+          <div className="six columns">
+            <PlayersScatterplot
+              yMetric={metric}
+              data={players}
+            />
+          </div>
+          <div className="six columns">
+            <PlayersVerticalHistogram
+              metric={metric}
+              data={players}
+            />
+          </div>
+        </div>
       </div>
     );
   }
