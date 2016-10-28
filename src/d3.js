@@ -8,6 +8,7 @@ import * as brush from 'd3-brush';
 import * as collection from 'd3-collection';
 import * as color from 'd3-color';
 import * as format from 'd3-format';
+import * as quadtree from 'd3-quadtree';
 import * as scale from 'd3-scale';
 import * as selection from 'd3-selection';
 import * as shape from 'd3-shape';
@@ -21,6 +22,7 @@ const d3 = Object.assign({},
   collection,
   color,
   format,
+  quadtree,
   scale,
   selection,
   shape,

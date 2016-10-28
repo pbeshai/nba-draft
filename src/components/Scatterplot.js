@@ -1,9 +1,9 @@
 import React, { PureComponent, PropTypes } from 'react';
 import addComputedProps from 'react-computed-props';
+import * as d3Selection from 'd3-selection';
 import d3 from '../d3';
 import AxisTooltip from './AxisTooltip';
 import DataDefPropType from '../datadefs/DataDefPropType';
-
 import './Scatterplot.scss';
 
 /**
@@ -75,9 +75,44 @@ function visProps(props) {
     .y(d => yScale(d[yKey]))
     .size([plotAreaWidth, plotAreaHeight])(data);
 
+  // generate a quadtree for faster lookups for brushing
+  const quadtree = d3.quadtree()
+    .x(d => xScale(d[xKey]))
+    .y(d => yScale(d[yKey]))
+    .addAll(data);
+
   const brush = d3.brush()
-    .on('brush end', function brushed() {
-      console.log('brush ended', this);
+    .on('brush end', () => {
+      const { selection } = d3Selection.event;
+      if (!selection) {
+        return;
+      }
+      const [bx0, by0] = selection[0];
+      const [bx1, by1] = selection[1];
+
+      const brushedNodes = [];
+      quadtree.visit((node, x0, y0, x1, y1) => {
+        // check that quadtree node intersects
+        const intersects = (bx0 <= x1 && x0 <= bx1 && by0 <= y1 && y0 <= by1);
+        // skip if it doesn't intersect the brush
+        if (!intersects) {
+          return true;
+        }
+
+        // if this is a leaf node (node.length is falsy), verify it is within the brush
+        if (!node.length) {
+          const d = node.data;
+          const dx = xScale(d[xKey]);
+          const dy = yScale(d[yKey]);
+          if (bx0 <= dx && dx <= bx1 && by0 <= dy && dy <= by1) {
+            brushedNodes.push(d);
+          }
+        }
+
+        return false;
+      });
+
+      console.log('brushing with', brushedNodes.map(d => d.name));
     })
     .extent([[0, 0], [plotAreaWidth, plotAreaHeight]]);
 
@@ -87,6 +122,7 @@ function visProps(props) {
     padding,
     plotAreaWidth,
     plotAreaHeight,
+    quadtree,
     xScale,
     yScale,
     voronoiDiagram,
