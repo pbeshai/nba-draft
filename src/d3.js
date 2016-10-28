@@ -4,6 +4,7 @@
  */
 import * as array from 'd3-array';
 import * as axis from 'd3-axis';
+import * as brush from 'd3-brush';
 import * as collection from 'd3-collection';
 import * as color from 'd3-color';
 import * as format from 'd3-format';
@@ -16,6 +17,7 @@ import * as voronoi from 'd3-voronoi';
 const d3 = Object.assign({},
   array,
   axis,
+  brush,
   collection,
   color,
   format,

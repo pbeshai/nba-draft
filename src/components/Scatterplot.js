@@ -75,7 +75,14 @@ function visProps(props) {
     .y(d => yScale(d[yKey]))
     .size([plotAreaWidth, plotAreaHeight])(data);
 
+  const brush = d3.brush()
+    .on('brush end', function brushed() {
+      console.log('brush ended', this);
+    })
+    .extent([[0, 0], [plotAreaWidth, plotAreaHeight]]);
+
   return {
+    brush,
     color,
     padding,
     plotAreaWidth,
@@ -99,6 +106,7 @@ function visProps(props) {
  */
 class Scatterplot extends PureComponent {
   static propTypes = {
+    brush: PropTypes.func,
     color: PropTypes.func,
     data: PropTypes.array,
     height: PropTypes.number,
@@ -112,6 +120,7 @@ class Scatterplot extends PureComponent {
     recomputedProps: PropTypes.bool,
     width: PropTypes.number,
     voronoiDiagram: PropTypes.object,
+    voronoiRadius: PropTypes.number,
     xDataDef: DataDefPropType,
     xNice: PropTypes.bool,
     xKey: PropTypes.string,
@@ -131,6 +140,7 @@ class Scatterplot extends PureComponent {
     width: 200,
     height: 200,
     pointRadius: 3,
+    voronoiRadius: 50,
     xDomainPadding: 1,
     yDomainPadding: 1,
   }
@@ -186,6 +196,8 @@ class Scatterplot extends PureComponent {
    * Initialize the d3 chart - this is run once on mount
    */
   setup() {
+    const { brush, voronoiDiagram, voronoiRadius } = this.props;
+
     this.g = d3.select(this.root)
       .append('g'); // transformed to have margin in update()
 
@@ -203,9 +215,15 @@ class Scatterplot extends PureComponent {
 
     this.circles = this.g.append('g').attr('class', 'circles');
 
-    this.voronoi = this.g.append('g')
-      .attr('class', 'voronoi')
-      .on('mouseleave', () => this.onHoverPoint(null));
+    const that = this;
+    this.brush = this.g.append('g')
+      .attr('class', 'brush')
+      .call(brush)
+      .on('mousemove.voronoi', function mouseMoveHandler() {
+        const [mx, my] = d3.mouse(this);
+        const site = voronoiDiagram.find(mx, my, voronoiRadius);
+        that.onHoverPoint(site && site.data);
+      });
 
     this.update();
   }
@@ -220,24 +238,7 @@ class Scatterplot extends PureComponent {
       this.updateChart();
       this.updateAxes();
       this.updatePoints();
-      this.updateVoronoi();
     }
-  }
-
-  updateVoronoi() {
-    const { voronoiDiagram } = this.props;
-
-    const binding = this.voronoi.selectAll('path')
-      .data(voronoiDiagram.polygons());
-
-    binding.exit().remove();
-
-    const entering = binding.enter().append('path');
-
-
-    binding.merge(entering)
-      .attr('d', d => (d ? `M${d.join('L')}Z` : null))
-      .on('mouseenter', d => this.onHoverPoint(d.data));
   }
 
   /**
