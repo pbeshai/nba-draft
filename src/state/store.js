@@ -6,6 +6,7 @@ import rootReducer from './reducer';
 const loggerMiddleware = createLogger({
   collapsed: true,
   level: 'debug',
+  predicate: (getState, action) => !/HIGHLIGHT/.test(action.type),
 });
 
 // define which middleware to use depending on environment
